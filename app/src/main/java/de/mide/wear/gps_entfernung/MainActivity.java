@@ -18,13 +18,12 @@ import android.widget.ProgressBar;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Locale;
 
 
 /**
   * Activity einer WearOS-App, mit der man die Entfernung zwischen zwei Orten über
-  * die GPS-Rechnung berechnen kann.
+  * die GPS-Ortung berechnen kann.
   * <br><br>
   *
   * This project is licensed under the terms of the BSD 3-Clause License.
@@ -34,6 +33,9 @@ public class MainActivity extends WearableActivity
 
     /** Tag für Log-Messages von dieser Activity. */
     private static final String TAG4LOGGING = "GPS-Entfernung";
+
+    /** API-Level um zu erkennen, ob Runtime Permissions unterstützt werden. */
+    public static final int API_LEVEL = android.os.Build.VERSION.SDK_INT;
 
     /** Key für geographische Länge in SharedPreference. */
     private static final String PREFKEY_GEOLAENGE = "geo_laenge";
@@ -47,8 +49,8 @@ public class MainActivity extends WearableActivity
     /** Preferences-Objekt zum Abspeichern der Koordinaten der letzten Ortung. */
     private SharedPreferences _sharedPreferences = null;
 
-    /** Formatierer für Entfernungen in (Kilo-)Meter. */
-    private DecimalFormat _zahlFormatierer = new DecimalFormat("###,###", DecimalFormatSymbols.getInstance(Locale.GERMANY));
+    /** Formatierer für Entfernungen in (Kilo-)Meter, fügt ggf. 1.000er-Punkt ein. */
+    private static DecimalFormat sZahlFormatierer = null;
 
     /** Button zum Auslösen der Ortung. */
     private Button _ortungsButton = null;
@@ -73,6 +75,11 @@ public class MainActivity extends WearableActivity
         _progressBar = findViewById(R.id.fortschrittsanzeige);
 
         _sharedPreferences = getSharedPreferences(PREF_DATEINAME, Context.MODE_PRIVATE );
+
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(Locale.GERMANY);
+        sZahlFormatierer = new DecimalFormat("###,###", dfs);
+
+        Log.i(TAG4LOGGING, "API-Level=" + API_LEVEL);
 
         setAmbientEnabled(); // Enables Always-on
     }
@@ -144,10 +151,7 @@ public class MainActivity extends WearableActivity
      @Override
      public void onClick(View view) {
 
-         int apiLevel = android.os.Build.VERSION.SDK_INT;
-         Log.i(TAG4LOGGING, "API-Level=" + apiLevel);
-
-         if (apiLevel < 23) {
+         if (API_LEVEL < 23) {
 
              ortungAnfordern();
 
@@ -167,6 +171,7 @@ public class MainActivity extends WearableActivity
          }
      }
 
+
      /**
       * Callback-Methode für Erhalt Ergebnis der Berechtigungsanfrage.
       *
@@ -180,7 +185,6 @@ public class MainActivity extends WearableActivity
      public void onRequestPermissionsResult(int      requestCode,
                                             String[] permissionsArray,
                                             int[]    grantResultsArry) {
-
 
          Log.i(TAG4LOGGING, "Anzahl Einträge in Permission-Array: " + permissionsArray.length);
 
@@ -294,11 +298,11 @@ public class MainActivity extends WearableActivity
 
              kilometer = entfernungMeter / 1000;
 
-             return _zahlFormatierer.format( kilometer ) + " km";
+             return sZahlFormatierer.format( kilometer ) + " km";
 
          } else {
 
-             return _zahlFormatierer.format( entfernungMeter  ) + " m";
+             return sZahlFormatierer.format( entfernungMeter  ) + " m";
          }
      }
 
