@@ -46,14 +46,11 @@ public class MainActivity extends WearableActivity
     /** Dateiname für SharedPreferences-Datei zum Abspeichern der Koordinaten der letzten Ortung. */
     private static final String PREF_DATEINAME = "koordinaten_prefs";
 
-    /** Preferences-Objekt zum Abspeichern der Koordinaten der letzten Ortung. */
-    private SharedPreferences _sharedPreferences = null;
-
     /** Formatierer für Entfernungen in (Kilo-)Meter, fügt ggf. 1.000er-Punkt ein. */
     private static DecimalFormat sZahlFormatierer = null;
 
-    /** Button zum Auslösen der Ortung. */
-    private Button _ortungsButton = null;
+    /** Preferences-Objekt zum Abspeichern der Koordinaten der letzten Ortung. */
+    private SharedPreferences _sharedPreferences = null;
 
     /** Fortschrittsanzeige, wird während der Ortungsabfrage auf sichtbar geschaltet. */
     private ProgressBar _progressBar = null;
@@ -69,8 +66,8 @@ public class MainActivity extends WearableActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _ortungsButton = findViewById(R.id.ortungsButton);
-        _ortungsButton.setOnClickListener(this);
+        Button button = findViewById(R.id.ortungsButton);
+        button.setOnClickListener(this);
 
         _progressBar = findViewById(R.id.fortschrittsanzeige);
 
