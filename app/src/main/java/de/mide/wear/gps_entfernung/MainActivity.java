@@ -70,13 +70,14 @@ public class MainActivity extends WearableActivity
     }
 
 
-     /**
-      * Methode zum Speichern eines Ortungsobjekts mit einem SharedPreferences-Objekt.
-      *
-      * @param location  Ortungs-Objekt, das in SharedPreferences-Objekt gespeichert
-      *                  werden soll; es werden geographische Länge und Breite
-      *                  gespeichert.
-      */
+    /**
+     * Methode zum Speichern eines Ortungsobjekts mit einem SharedPreferences-Objekt;
+     * wenn schon ein Ortungsobjekt gespeichert ist, dann wird es überschrieben.
+     *
+     * @param location  Ortungs-Objekt, das in SharedPreferences-Objekt gespeichert
+     *                  werden soll; es werden geographische Länge und Breite
+     *                  gespeichert.
+     */
     protected void speicherLocation(Location location) {
 
         float breite = (float) location.getLatitude();
@@ -91,12 +92,12 @@ public class MainActivity extends WearableActivity
     }
 
 
-     /**
-      * Methode zum Auslesen des in den SharedPreferences gespeicherten Location-Objekts.
-      *
-      * @return  Aus SharedPreferences ausgelesener Location-Objekt; ist {@code null},
-      *          wenn noch keine Koordinaten abgespeichert wurden!
-      */
+    /**
+     * Methode zum Auslesen des in den SharedPreferences gespeicherten Location-Objekts.
+     *
+     * @return  Aus SharedPreferences ausgelesener Location-Objekt; ist {@code null},
+     *          wenn noch keine Koordinaten abgespeichert wurden!
+     */
     protected Location holeLocation() {
 
         boolean geoBreiteGespeichert = _sharedPreferences.contains(PREFKEY_GEOBREITE);
@@ -201,7 +202,8 @@ public class MainActivity extends WearableActivity
 
 
      /**
-      * Methode startet Abfrage der aktuellen (GPS-)Ortung -- asynchron!
+      * Methode startet Abfrage der aktuellen (GPS-)Ortung -- asynchron, Callback-Methode
+      * ist {@link #onLocationChanged(Location)}.
       * <br><br>
       *
       * <b>Bevor diese Methode aufgerufen wird muss sichergestellt sein, dass die App die
@@ -230,45 +232,30 @@ public class MainActivity extends WearableActivity
 
 
      /**
-      * Methode um Fehlermeldung in Dialog anzuzeigen.
-      *
-      * @param nachricht  Anzuzeigende Nachricht.
-      *
-      * @param istFehler  {@code true} gdw. die darzustellende Nachricht eine Fehlermeldung ist
-      *                   (wird für Titel des Dialogs benötigt).
-      */
-     protected void zeigeDialog(String nachricht, boolean istFehler) {
-
-         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-         if(istFehler) {
-
-             dialogBuilder.setTitle( "Fehler" );
-
-         } else {
-
-             dialogBuilder.setTitle( "Ergbnis" );
-         }
-
-         dialogBuilder.setMessage(nachricht);
-         dialogBuilder.setPositiveButton( "Ok", null);
-
-         AlertDialog dialog = dialogBuilder.create();
-         dialog.show();
-     }
-
-
-     /**
       * Methode aus Interface {@link LocationListener}; wird aufgerufen, wenn neuer
       * Ortungswert vorliegt. Da wir nur eine einmalige Ortung angefordert haben
       * müssen wir die Ortung auch nicht "abschalten".
       *
-      * @param location  Neue Ortung
+      * @param location  Neue Ortung; wird in SharedPrefs gespeichert.
       */
      @Override
      public void onLocationChanged(Location location) {
 
          _progressBar.setVisibility( View.INVISIBLE );
+
+
+         Location locationAlt = holeLocation();
+         if (locationAlt == null) {
+
+             zeigeDialog("Erste Ortung gespeichert.");
+
+         } else {
+             int entfernungMeter = (int) location.distanceTo(locationAlt);
+             zeigeDialog("Entfernung zu letzter Ortung: " + entfernungMeter);
+         }
+
+         // Erste Ortung speichern oder bisherige Ortung überschreiben.
+         speicherLocation(location);
      }
 
 
@@ -281,7 +268,6 @@ public class MainActivity extends WearableActivity
       *
       * @param bundle  Zusätzliche Infos als Key-Value-Paare.
       */
-     @Deprecated
      @Override
      public void onStatusChanged(String providerName, int status, Bundle bundle) {
 
@@ -311,5 +297,45 @@ public class MainActivity extends WearableActivity
 
         // absichtlich leer gelassen
      }
+
+
+     /**
+      * Methode um Fehlermeldung in Dialog anzuzeigen.
+      *
+      * @param nachricht  Anzuzeigende Nachricht, die keine Fehlermeldung ist.
+      */
+     protected void zeigeDialog(String nachricht) {
+
+        zeigeDialog(nachricht, false); // false: kein Fehler
+     }
+
+
+    /**
+     * Methode um Text in Dialog anzuzeigen (normaler Text oder Fehlermeldung).
+     *
+     * @param nachricht  Anzuzeigende Nachricht.
+     *
+     * @param istFehler  {@code true} gdw. die darzustellende Nachricht eine Fehlermeldung ist
+     *                   (wird für Titel des Dialogs benötigt).
+     */
+    protected void zeigeDialog(String nachricht, boolean istFehler) {
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        if (istFehler) {
+
+            dialogBuilder.setTitle( "Fehler" );
+
+        } else {
+
+            dialogBuilder.setTitle( "Ergbnis" );
+        }
+
+        dialogBuilder.setMessage(nachricht);
+        dialogBuilder.setPositiveButton( "Ok", null);
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+    }
 
 }
