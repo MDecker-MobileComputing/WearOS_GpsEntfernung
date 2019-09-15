@@ -16,6 +16,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 
 /**
   * Activity einer WearOS-App, mit der man die Entfernung zwischen zwei Orten über
@@ -42,11 +47,14 @@ public class MainActivity extends WearableActivity
     /** Preferences-Objekt zum Abspeichern der Koordinaten der letzten Ortung. */
     private SharedPreferences _sharedPreferences = null;
 
-    /** Fortschrittsanzeige, wird während der Ortungsabfrage auf sichtbar geschaltet. */
-    private ProgressBar _progressBar = null;
+    /** Formatierer für Entfernungen in (Kilo-)Meter. */
+    private DecimalFormat _zahlFormatierer = new DecimalFormat("###,###", DecimalFormatSymbols.getInstance(Locale.GERMANY));
 
     /** Button zum Auslösen der Ortung. */
     private Button _ortungsButton = null;
+
+    /** Fortschrittsanzeige, wird während der Ortungsabfrage auf sichtbar geschaltet. */
+    private ProgressBar _progressBar = null;
 
 
      /**
@@ -254,12 +262,44 @@ public class MainActivity extends WearableActivity
              zeigeDialog("Erste Ortung gespeichert.");
 
          } else {
+
              int entfernungMeter = (int) location.distanceTo(locationAlt);
-             zeigeDialog("Entfernung zu letzter Ortung: " + entfernungMeter + "m");
+
+             String entfernungStr = meter2string(entfernungMeter);
+
+             zeigeDialog("Entfernung zu letzter Ortung: " + entfernungStr);
          }
 
          // Erste Ortung speichern oder bisherige Ortung überschreiben.
          speicherLocation(location);
+     }
+
+
+    /**
+     * Methode zur Formatierung der gemessenen Entfernung zwischen zwei GPS-Koordinaten
+     * für die Anzeige; bis einschl. 10.000m wird in Meter angezeigt, danach nur noch
+     * die vollen Kilometer.
+     *
+     * @param entfernungMeter  Gemessene Entfernung in Metern die angezeigt werden soll.
+     *
+     * @return  String mit Entfernung in Meter oder Kilometern zur Anzeige, z.B.
+     *          "1234m" oder "1234km".
+     */
+     protected String meter2string(int entfernungMeter) {
+
+         String einheit   = "m";
+         int    kilometer = -1;
+
+         if (entfernungMeter > 10000) {
+
+             kilometer = entfernungMeter / 1000;
+
+             return _zahlFormatierer.format( kilometer ) + " km";
+
+         } else {
+
+             return _zahlFormatierer.format( entfernungMeter  ) + " m";
+         }
      }
 
 
@@ -304,7 +344,7 @@ public class MainActivity extends WearableActivity
 
 
      /**
-      * Methode um Fehlermeldung in Dialog anzuzeigen.
+      * Convenience-Methode um Fehlermeldung in Dialog anzuzeigen.
       *
       * @param nachricht  Anzuzeigende Nachricht, die keine Fehlermeldung ist.
       */
@@ -332,7 +372,7 @@ public class MainActivity extends WearableActivity
 
         } else {
 
-            dialogBuilder.setTitle( "Ergbnis" );
+            dialogBuilder.setTitle( "Ergebnis" );
         }
 
         dialogBuilder.setMessage(nachricht);
