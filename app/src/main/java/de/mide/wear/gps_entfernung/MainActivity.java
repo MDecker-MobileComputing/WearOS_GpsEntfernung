@@ -36,6 +36,7 @@ public class MainActivity extends WearableActivity
     /** Key für geographische Breite in SharedPreference. */
     private static final String PREFKEY_GEOBREITE = "geo_breite";
 
+    /** Dateiname für SharedPreferences-Datei zum Abspeichern der Koordinaten der letzten Ortung. */
     private static final String PREF_DATEINAME = "koordinaten_prefs";
 
     /** Preferences-Objekt zum Abspeichern der Koordinaten der letzten Ortung. */
@@ -108,6 +109,10 @@ public class MainActivity extends WearableActivity
             return null;
         }
 
+        // Default-Wert wird für Aufruf Methode SharedPreferences::getFloat() als Argument
+        // benötigt, aber da wir zuvor mit SharedPreferences::contains() geprüft haben,
+        // dass die beiden Koordinatenwerte in den SharedPreferences vorhanden sind
+        // wird dieser Wert nie tatsächlich zurückgegeben werden.
         final float defaultWert = 0.0f;
 
         double breite = _sharedPreferences.getFloat(PREFKEY_GEOBREITE, defaultWert);
