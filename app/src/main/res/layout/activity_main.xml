@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.wear.widget.BoxInsetLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/dark_grey"
-    android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
-    tools:deviceIds="wear">
+    android:layout_height="match_parent">
 
-    <FrameLayout
+
+    <Button
+        android:id="@+id/ortungsButton"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:boxedEdges="all"
-        tools:ignore="MissingPrefix">
-        <!--"tools:ignore=...", siehe https://stackoverflow.com/a/53686106/1364368 -->
-
-        <Button
-            android:id="@+id/ortungsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Ortung!" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Ortung!"
+        android:textSize="20sp" />
 
 
-        <!-- Fortschrittsanzeige, ist zunächst unsichtbar, wird nur während Ortungs-Vorgang
-             auf sichtbar geschaltet. -->
-        <ProgressBar
-            android:id="@+id/fortschrittsanzeige"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical" />
+    <!-- Fortschrittsanzeige, ist zunächst unsichtbar, wird nur während Ortungs-Vorgang
+         auf sichtbar geschaltet und liegt dann über dem Button (wegen FrameLayout).
+      -->
+    <ProgressBar
+        android:id="@+id/fortschrittsanzeige"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
 
-    </FrameLayout>
-
-</android.support.wear.widget.BoxInsetLayout>
+</FrameLayout>

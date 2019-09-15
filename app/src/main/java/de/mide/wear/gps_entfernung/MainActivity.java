@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -26,7 +25,7 @@ import android.widget.ProgressBar;
   * This project is licensed under the terms of the BSD 3-Clause License.
   */
 public class MainActivity extends WearableActivity
-                          implements OnClickListener, LocationListener {
+                          implements View.OnClickListener, LocationListener {
 
     /** Tag für Log-Messages von dieser Activity. */
     private static final String TAG4LOGGING = "GPS-Entfernung";
@@ -251,7 +250,7 @@ public class MainActivity extends WearableActivity
 
          } else {
              int entfernungMeter = (int) location.distanceTo(locationAlt);
-             zeigeDialog("Entfernung zu letzter Ortung: " + entfernungMeter);
+             zeigeDialog("Entfernung zu letzter Ortung: " + entfernungMeter + "m");
          }
 
          // Erste Ortung speichern oder bisherige Ortung überschreiben.
