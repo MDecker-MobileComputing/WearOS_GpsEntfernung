@@ -57,10 +57,10 @@ public class MainActivity extends WearableActivity
     private ProgressBar _progressBar = null;
 
 
-     /**
-      * Lifecycle-Methode: Lädt Layout-Datei, holt Referenz auf Button & ProgressBar,
-      * lädt auch SharedPreferences-Datei.
-      */
+    /**
+     * Lifecycle-Methode: Lädt Layout-Datei, holt Referenz auf Button & ProgressBar,
+     * lädt auch SharedPreferences-Datei.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -275,16 +275,16 @@ public class MainActivity extends WearableActivity
      }
 
 
-    /**
-     * Methode zur Formatierung der gemessenen Entfernung zwischen zwei GPS-Koordinaten
-     * für die Anzeige; bis einschl. 10.000m wird in Meter angezeigt, danach nur noch
-     * die vollen Kilometer.
-     *
-     * @param entfernungMeter  Gemessene Entfernung in Metern die angezeigt werden soll.
-     *
-     * @return  String mit Entfernung in Meter oder Kilometern zur Anzeige, z.B.
-     *          "1234m" oder "1234km".
-     */
+     /**
+      * Methode zur Formatierung der gemessenen Entfernung zwischen zwei GPS-Koordinaten
+      * für die Anzeige; bis einschl. 10.000m wird in Meter angezeigt, danach nur noch
+      * die vollen Kilometer.
+      *
+      * @param entfernungMeter  Gemessene Entfernung in Metern die angezeigt werden soll.
+      *
+      * @return  String mit Entfernung in Meter oder Kilometern zur Anzeige, z.B.
+      *          "1234m" oder "1234km".
+      */
      protected String meter2string(int entfernungMeter) {
 
          String einheit   = "m";
